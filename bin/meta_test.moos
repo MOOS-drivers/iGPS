@@ -1,0 +1,22 @@
+ServerHost = localhost
+ServerPort = 9000
+Community = iGPS_Test
+
+MOOSTimeWarp = 1
+
+ProcessConfig = ANTLER
+{
+  MSBetweenLaunches = 500
+  Run = MOOSDB           @ NewConsole = true 
+  Run = iGPS             @ NewConsole = false
+}
+
+ProcessConfig = uXMS
+{
+  AppTick       = 10
+  CommsTick     = 10
+
+  source = iGPS
+}
+
+#include ../src/iGPS.moos
