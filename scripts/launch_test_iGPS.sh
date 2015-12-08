@@ -25,7 +25,7 @@ if [ ${JUST_MAKE} = "yes" ] ; then
 fi
 
 ## Launch the test
-export PATH=$PATH:$PWD
+export PATH=$PATH:$PWD/../bin
 pAntler targ_test.moos >& /dev/null &
 
 uXMS targ_test.moos

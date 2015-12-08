@@ -35,6 +35,7 @@ done
 #  Part 2: Invoke the call to make in the build directory
 #-------------------------------------------------------------------
 
+mkdir -p bin
 mkdir build &> /dev/null
 cd build
 
