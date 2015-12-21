@@ -9,11 +9,12 @@
 #define GPS_HEADER
 
 #include "MOOS/libMOOS/MOOSLib.h"
+#include "MOOS/libMOOS/Thirdparty/AppCasting/AppCastingMOOSInstrument.h"
 #include "MOOS/libMOOSGeodesy/MOOSGeodesy.h"
 
 #define KNOTS2MPS 0.5144444444
 
-class GPS : public CMOOSInstrument
+class GPS : public AppCastingMOOSInstrument
 {
  public:
    GPS();
@@ -35,6 +36,8 @@ class GPS : public CMOOSInstrument
    double DMS2DecDeg(double d);
 
    double Knots2MPS(double s);
+   
+   bool buildReport();
 
  private: // Configuration variables
 

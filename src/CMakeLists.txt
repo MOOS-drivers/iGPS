@@ -1,7 +1,7 @@
 #===========================================================================
 # FILE:  iGPS/src/CMakeLists.txt
 # DATE:  2015/12/07
-# INFO:  Source-level CMakeLists.txt file for the moos-ivp-extend project
+# INFO:  Source-level CMakeLists.txt file for the GPS driver project
 # NAME:  Maintained by Mohamed Saad IBN SEDDIK 
 #        from original file moos-ivp-extend/CMakeLists.txt
 #===========================================================================
@@ -21,6 +21,7 @@ TARGET_LINK_LIBRARIES(iGPS
   ${MOOS_LIBRARIES}
   ${MOOSGeodesy_LIBRARIES}
   mbutil
+  apputil
   m
   pthread
 )

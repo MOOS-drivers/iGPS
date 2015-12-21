@@ -7,6 +7,7 @@
 
 #include <iterator>
 #include "MBUtils.h"
+#include "ACTable.h"
 #include "GPS.h"
 
 using namespace std;
@@ -32,7 +33,8 @@ GPS::~GPS()
 
 bool GPS::OnNewMail(MOOSMSG_LIST &NewMail)
 {
-   return UpdateMOOSVariables(NewMail);
+  AppCastingMOOSInstrument::OnNewMail(NewMail);
+  return UpdateMOOSVariables(NewMail);
 }
 
 //---------------------------------------------------------
@@ -40,13 +42,13 @@ bool GPS::OnNewMail(MOOSMSG_LIST &NewMail)
 
 bool GPS::OnConnectToServer()
 {
-   // register for variables here
-   // possibly look at the mission file?
-   // m_MissionReader.GetConfigurationParam("Name", <string>);
-   // m_Comms.Register("VARNAME", 0);
-	
-   RegisterVariables();
-   return(true);
+  // register for variables here
+  // possibly look at the mission file?
+  // m_MissionReader.GetConfigurationParam("Name", <string>);
+  // m_Comms.Register("VARNAME", 0);
+
+  RegisterVariables();
+  return(true);
 }
 
 //---------------------------------------------------------
@@ -55,11 +57,13 @@ bool GPS::OnConnectToServer()
 
 bool GPS::Iterate()
 {
+  AppCastingMOOSInstrument::Iterate();
   m_iterations++; 
 
   if(GetData())
     PublishData();
-
+  
+  AppCastingMOOSInstrument::PostReport();
   return(true);
 }
 
@@ -69,7 +73,7 @@ bool GPS::Iterate()
 
 bool GPS::OnStartUp()
 {
-  CMOOSInstrument::OnStartUp();
+  AppCastingMOOSInstrument::OnStartUp();
 
   double dLatOrigin;
   if (!m_MissionReader.GetValue("LatOrigin",dLatOrigin))
@@ -150,7 +154,48 @@ bool GPS::OnStartUp()
 
 void GPS::RegisterVariables()
 {
+  AppCastingMOOSInstrument::RegisterMOOSVariables();
   // m_Comms.Register("FOOBAR", 0);
+}
+
+bool GPS::buildReport()
+{
+  m_msgs << "============================================ \n";
+  m_msgs << "iGPS                                         \n";
+  m_msgs << "============================================ \n";
+
+  ACTable actab(4);
+  actab << "X | Y | N | E";
+  actab.addHeaderLines();
+  string x = doubleToString(GetMOOSVar("X")->GetDoubleVal());
+  string y = doubleToString(GetMOOSVar("Y")->GetDoubleVal());
+  string n = doubleToString(GetMOOSVar("N")->GetDoubleVal());
+  string e = doubleToString(GetMOOSVar("E")->GetDoubleVal());
+  actab << x << y << n << e;
+  m_msgs << actab.getFormattedString();
+  
+  ACTable actab2(4);
+  actab2 << "Speed | Heading | Yaw | Altitude";
+  actab2.addHeaderLines();
+  string s =    doubleToString(GetMOOSVar("Speed")->GetDoubleVal());
+  string h =  doubleToString(GetMOOSVar("Heading")->GetDoubleVal());
+  string yaw =    doubleToString(GetMOOSVar("Yaw")->GetDoubleVal());
+  string a = doubleToString(GetMOOSVar("Altitude")->GetDoubleVal());
+  actab2 << s << h << yaw << a ;
+  m_msgs << actab2.getFormattedString();
+  
+  ACTable actab3(3);
+  actab3 << "Latitude | Longitude | Number of Satellites";
+  actab3.addHeaderLines();
+  string lat =   doubleToString(GetMOOSVar("Latitude")->GetDoubleVal());
+  string lon =  doubleToString(GetMOOSVar("Longitude")->GetDoubleVal());
+  string sat = doubleToString(GetMOOSVar("Satellites")->GetDoubleVal());
+  actab3 << lat << lon << sat ;
+  m_msgs << actab3.getFormattedString();
+  
+  
+
+  return(true);
 }
 
 bool GPS::InitialiseSensor()
