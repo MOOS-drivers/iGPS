@@ -1,0 +1,45 @@
+language: cpp
+
+os:
+ - linux
+ - osx
+
+compiler:
+ - gcc
+
+cache:
+  directories:
+  - $TRAVIS_BUILD_DIR/../moos-ivp/
+
+addons:
+  apt:
+    packages:
+    - cmake
+    - subversion
+    - g++
+    - xterm
+    - libfltk1.3-dev
+    - freeglut3-dev
+    - libpng12-dev
+    - libjpeg-dev
+    - libxft-dev
+    - libxinerama-dev
+    - libtiff4-dev
+    - tree
+
+before_script:
+ - export curr_path=$PWD
+ - cd ..
+ - svn co https://oceanai.mit.edu/svn/moos-ivp-aro/releases/moos-ivp-15.5 moos-ivp
+ - cd moos-ivp
+ - ./build-moos.sh -j 2
+ - ./build-ivp.sh -m -f -j 2
+ - export PATH=$PATH:$PWD/bin
+ - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/lib
+ - cd "$curr_path"
+
+script:
+ - ./build.sh -j 2
+
+after_script:
+ - tree -I build
